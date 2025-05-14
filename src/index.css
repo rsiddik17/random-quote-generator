@@ -1,0 +1,21 @@
+body {
+  background-color: #fefe;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 100px;
+  text-align: center;
+}
+
+.card {
+  width: 500px;
+  justify-self: center;
+  margin-top: 25px;
+}
+
+.margin-top {
+  margin-top: 8px !important;
+}
