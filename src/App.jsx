@@ -22,14 +22,29 @@ function App() {
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem("darkMode") === "true";
   });
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem("quoteHistory");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const handleClick = async () => {
     setLoading(true);
     try {
       const data = await getQuotes();
       if (data && data.length > 0) {
-        setQuote(data[0].quote);
-        setAuthor(data[0].author);
+        const newQuote = {
+          quote: data[0].quote,
+          author: data[0].author,
+        };
+
+        setHistory((prev) => {
+          const updated = [newQuote, ...prev.slice(0, 4)];
+          localStorage.setItem("quoteHistory", JSON.stringify(updated));
+          return updated;
+        });
+
+        setQuote(newQuote.quote);
+        setAuthor(newQuote.author);
       }
     } catch (err) {
       alert("Failed to load quote. Please try again later.");
@@ -49,6 +64,11 @@ function App() {
       localStorage.setItem("darkMode", next);
       return next;
     });
+  };
+
+  const handleClearHistory = () => {
+    setHistory([]);
+    localStorage.removeItem("quoteHistory");
   };
 
   useEffect(() => {
@@ -72,7 +92,7 @@ function App() {
         sx={{ width: "100%", maxWidth: 500 }}
       >
         <Typography variant="h3" gutterBottom>
-          Random Quote generator
+          Random Quote Generator
         </Typography>
         <IconButton onClick={handleToggleDark} className="toggle-dark">
           {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
@@ -92,7 +112,6 @@ function App() {
                   </Typography>
                   <Typography
                     variant="subtitle2"
-                    color="textSecondary"
                     className="margin-top"
                   >
                     {author}
@@ -132,6 +151,40 @@ function App() {
         onClose={() => setToastOpen(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
+
+      {history.length > 0 && (
+        <div className="history">
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ mb: 2 }}
+          >
+            <Typography variant="h6">Quote History</Typography>
+            <Button
+              onClick={handleClearHistory}
+              color="error"
+              size="small"
+              variant="outlined"
+            >
+              Clear History
+            </Button>
+          </Stack>
+
+          <div className="history-grid">
+              {history.map((item, index) => (
+            <Card key={index} className="card history-card">
+              <CardContent>
+                <Typography variant="body1">"{item.quote}"</Typography>
+                <Typography variant="caption">
+                  — {item.author}
+                </Typography>
+              </CardContent>
+            </Card>
+          ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

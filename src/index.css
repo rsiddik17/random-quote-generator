@@ -1,5 +1,8 @@
 body {
   background-color: #fefefe;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 .app {
@@ -16,6 +19,7 @@ body {
   width: 100%;
   margin-top: 25px;
   padding: 16px;
+  box-sizing: border-box;
 }
 
 .margin-top {
@@ -31,10 +35,6 @@ body.dark {
 body.dark .MuiCard-root {
   background-color: #1e1e1e !important;
   color: #fff;
-}
-
-body.dark .MuiTypography-colorTextSecondary {
-  color: #ccc !important;
 }
 
 /* Toggle button styling */
@@ -59,4 +59,27 @@ body.dark .toggle-dark {
 
 .toggle-dark:hover {
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
+}
+
+.history {
+  margin-top: 40px;
+  max-width: 500px;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.history-card {
+  margin-bottom: 12px;
+  background-color: #f0f0f0;
+}
+
+body.dark .history-card {
+  background-color: #1f1f1f;
+  color: white;
 }
