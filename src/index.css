@@ -1,5 +1,5 @@
 body {
-  background-color: #fefe;
+  background-color: #fefefe;
 }
 
 .app {
@@ -12,12 +12,51 @@ body {
 }
 
 .card {
+  max-width: 500px;
   width: 100%;
-  width: 500px;
   margin-top: 25px;
   padding: 16px;
 }
 
 .margin-top {
   margin-top: 8px;
+}
+
+/* === DARK MODE === */
+body.dark {
+  background-color: #121212;
+  color: #fff;
+}
+
+body.dark .MuiCard-root {
+  background-color: #1e1e1e !important;
+  color: #fff;
+}
+
+body.dark .MuiTypography-colorTextSecondary {
+  color: #ccc !important;
+}
+
+/* Toggle button styling */
+.toggle-dark {
+  width: 40px;
+  height: 40px;
+  border-radius: 50% !important;
+  background-color: #e0e0e0;
+  color: #333;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, box-shadow 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.dark .toggle-dark {
+  background-color: #2e2e2e;
+  color: white;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+}
+
+.toggle-dark:hover {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
 }
