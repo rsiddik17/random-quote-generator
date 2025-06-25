@@ -26,8 +26,9 @@ function App() {
     const saved = localStorage.getItem("quoteHistory");
     return saved ? JSON.parse(saved) : [];
   });
+  const hasMounted = React.useRef(false);
 
-  const handleClick = async () => {
+  const handleClick = async (addToHistory = true) => {
     setLoading(true);
     try {
       const data = await getQuotes();
@@ -71,8 +72,27 @@ function App() {
     localStorage.removeItem("quoteHistory");
   };
 
+  const speak = () => {
+    if (!quote) return;
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(`"${quote}" by ${author}`);
+    utterance.lang = "en-US";
+    utterance.rate = 1;
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const stopSpeaking = () => {
+    window.speechSynthesis.cancel();
+  };
+
   useEffect(() => {
-    handleClick();
+    if (!hasMounted.current) {
+      handleClick();
+      hasMounted.current = true;
+    }
   }, []);
 
   useEffect(() => {
@@ -108,13 +128,10 @@ function App() {
               {quote && (
                 <>
                   <Typography variant="h6" gutterBottom>
-                    {quote}
+                    "{quote}""
                   </Typography>
-                  <Typography
-                    variant="subtitle2"
-                    className="margin-top"
-                  >
-                    {author}
+                  <Typography variant="subtitle2" className="margin-top">
+                    - {author}
                   </Typography>
                   <hr />
                 </>
@@ -138,6 +155,20 @@ function App() {
                 >
                   Copy to Clipboard
                 </Button>
+
+                <Stack direction="row" spacing={1}>
+                  <Button variant="outlined" fullWidth onClick={speak}>
+                    🔊 Listen to Quote
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    color="error"
+                    onClick={stopSpeaking}
+                  >
+                    🛑 Stop Voice
+                  </Button>
+                </Stack>
               </Stack>
             </>
           )}
@@ -172,16 +203,14 @@ function App() {
           </Stack>
 
           <div className="history-grid">
-              {history.map((item, index) => (
-            <Card key={index} className="card history-card">
-              <CardContent>
-                <Typography variant="body1">"{item.quote}"</Typography>
-                <Typography variant="caption">
-                  — {item.author}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
+            {history.map((item, index) => (
+              <Card key={index} className="card history-card">
+                <CardContent>
+                  <Typography variant="body1">"{item.quote}"</Typography>
+                  <Typography variant="caption">— {item.author}</Typography>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       )}
