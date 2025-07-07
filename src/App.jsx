@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from "react";
 import getQuotes from "./getQuotes";
-import {
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  CircularProgress,
-  Snackbar,
-  Stack,
-  IconButton,
-} from "@mui/material";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
+import { Stack, Typography, Button } from "@mui/material";
+import QuoteCard from "./components/QuoteCard";
+import QuoteHistory from "./components/QuoteHistory";
+import DarkModeToggle from "./components/DarkModeToggle";
+import ToastNotification from "./components/ToastNotification";
 
 function App() {
   const [quote, setQuote] = useState("");
@@ -28,7 +20,7 @@ function App() {
   });
   const hasMounted = React.useRef(false);
 
-  const handleClick = async (addToHistory = true) => {
+  const handleClick = async () => {
     setLoading(true);
     try {
       const data = await getQuotes();
@@ -114,73 +106,23 @@ function App() {
         <Typography variant="h3" gutterBottom>
           Random Quote Generator
         </Typography>
-        <IconButton onClick={handleToggleDark} className="toggle-dark">
-          {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-        </IconButton>
+        <DarkModeToggle darkMode={darkMode} onToggle={handleToggleDark} />
       </Stack>
 
-      <Card className="card">
-        <CardContent>
-          {loading ? (
-            <CircularProgress />
-          ) : (
-            <>
-              {quote && (
-                <>
-                  <Typography variant="h6" gutterBottom>
-                    "{quote}""
-                  </Typography>
-                  <Typography variant="subtitle2" className="margin-top">
-                    - {author}
-                  </Typography>
-                  <hr />
-                </>
-              )}
+      <QuoteCard
+        quote={quote}
+        author={author}
+        loading={loading}
+        onGetQuote={handleClick}
+        onCopy={handleCopy}
+        onSpeak={speak}
+        onStop={stopSpeaking}
+      />
 
-              <Stack spacing={1}>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  fullWidth
-                  onClick={handleClick}
-                >
-                  Get Another Quote
-                </Button>
-
-                <Button
-                  variant="outlined"
-                  startIcon={<ContentCopyIcon />}
-                  onClick={handleCopy}
-                  fullWidth
-                >
-                  Copy to Clipboard
-                </Button>
-
-                <Stack direction="row" spacing={1}>
-                  <Button variant="outlined" fullWidth onClick={speak}>
-                    🔊 Listen to Quote
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    fullWidth
-                    color="error"
-                    onClick={stopSpeaking}
-                  >
-                    🛑 Stop Voice
-                  </Button>
-                </Stack>
-              </Stack>
-            </>
-          )}
-        </CardContent>
-      </Card>
-
-      <Snackbar
+      <ToastNotification
         open={toastOpen}
-        autoHideDuration={3000}
         message="Copied to clipboard!"
         onClose={() => setToastOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
 
       {history.length > 0 && (
@@ -202,16 +144,7 @@ function App() {
             </Button>
           </Stack>
 
-          <div className="history-grid">
-            {history.map((item, index) => (
-              <Card key={index} className="card history-card">
-                <CardContent>
-                  <Typography variant="body1">"{item.quote}"</Typography>
-                  <Typography variant="caption">— {item.author}</Typography>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <QuoteHistory history={history} />
         </div>
       )}
     </div>
